@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import dadosLocais from '../../data/dadosIniciais.json';
+import storage from '../../data/storage';
 import BannerMain from '../../components/BannerMain';
 import Carousel from '../../components/Carousel';
 import categoriasRepository from '../../repositories/categorias';
@@ -10,13 +11,19 @@ function Home() {
   const [dadosIniciais, setDadosIniciais] = useState([]);
 
   useEffect(() => {
+    function mergeLocalStorage(categorias) {
+      const extraCategorias = storage.getCategorias();
+      const extraVideos = storage.getVideos();
+      const todas = [...categorias, ...extraCategorias];
+      return todas.map((cat) => ({
+        ...cat,
+        videos: [...(cat.videos || []), ...extraVideos.filter((v) => v.categoriaId === cat.id)],
+      }));
+    }
+
     categoriasRepository.getAllWithVideos()
-       .then((categoriasComVideos) => {
-          setDadosIniciais(categoriasComVideos);
-       })
-       .catch(() => {
-         setDadosIniciais(dadosLocais);
-       });
+       .then((data) => setDadosIniciais(mergeLocalStorage(data)))
+       .catch(() => setDadosIniciais(mergeLocalStorage(dadosLocais)));
   }, []);
 
   return (

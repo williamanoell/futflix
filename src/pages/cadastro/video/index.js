@@ -4,9 +4,9 @@ import { Link, useHistory } from 'react-router-dom';
 import useForm from '../../../hooks/useForm';
 import FormField from '../../../components/FormField';
 import Button from '../../../components/Button';
-import videosRepository from '../../../repositories/videos';
 import categoriasRepository from '../../../repositories/categorias';
 import dadosLocais from '../../../data/dadosIniciais.json';
+import storage from '../../../data/storage';
 
 
 
@@ -22,12 +22,13 @@ function CadastroVideo() {
   });
 
   useEffect(() => {
+    const extras = storage.getCategorias();
     categoriasRepository.getAll()
       .then((categoriasFromServer) => {
-        setcCategorias(categoriasFromServer);
+        setcCategorias([...categoriasFromServer, ...extras]);
       })
       .catch(() => {
-        setcCategorias(dadosLocais);
+        setcCategorias([...dadosLocais, ...extras]);
       });
   },[]);
 
@@ -41,14 +42,12 @@ function CadastroVideo() {
         const categoriaEscolhida = categorias.find((categoria) => {
           return categoria.titulo === values.categoria;
         });
-        console.log('categoria Escolhida',categoriaEscolhida);
-        videosRepository.create({
+        storage.addVideo({
           titulo: values.titulo,
           url: values.url,
           categoriaId: categoriaEscolhida ? categoriaEscolhida.id : null,
-        })
-          .then(() => { history.push('/'); })
-          .catch(() => { history.push('/'); });
+        });
+        history.push('/');
 
         
       }}>

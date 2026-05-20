@@ -1,54 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageDefault from '../../../components/PageDefault';
 import FormField from '../../../components/FormField';
 import Button from '../../../components/Button';
 import useForm from '../../../hooks/useForm';
+import storage from '../../../data/storage';
 
 
 function CadastroCategoria() {
   const valoresIniciais = {
     titulo: '',
     descricao: '',
-    cor: '',
+    cor: '#6BD1FF',
   };
 
   const { HandlerChange, values, clearForm } = useForm(valoresIniciais);
 
-  const [categorias, setCategorias] = useState([]);
-  
-
-  useEffect(() => {
-    const URL = window.location.hostname.includes('localhost')
-        ? 'http://localhost:8080/categorias'
-        : 'https://futflix.herokuapp.com/categorias';
-
-    fetch(URL)
-      .then(async (respostaDoServidor) => {
-        const resposta = await respostaDoServidor.json();
-        setCategorias([
-          ...resposta,
-        ]);
-      });
-
-    // setTimeout(() => {
-    //   setCategorias(() => [
-    //     ...categorias,
-    //     {
-    //       id: 1,
-    //       titulo: 'Alemanha',
-    //       descricao: 'Bundesliga',
-    //       cor: 'cbd1ff',
-    //     },
-    //     {
-    //       id: 2,
-    //       titulo: 'Portugal',
-    //       descricao: 'Português',
-    //       cor: 'cbd1ff',
-    //     },
-    //   ]);
-    // }, 4 * 1000);
-  }, []);
+  const [categorias, setCategorias] = useState(storage.getCategorias);
 
   return (
     <PageDefault>
@@ -59,11 +27,8 @@ function CadastroCategoria() {
 
       <form onSubmit={function handleSubmit(infosDoEvento) {
         infosDoEvento.preventDefault();
-        setCategorias([
-          ...categorias,
-          values,
-        ]);
-
+        const nova = storage.addCategoria(values);
+        setCategorias([...categorias, nova]);
         clearForm();
       }}
       >
