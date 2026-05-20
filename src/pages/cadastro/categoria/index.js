@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import PageDefault from '../../../components/PageDefault';
-import FormField from '../../../components/FormField';
 import Button from '../../../components/Button';
-import useForm from '../../../hooks/useForm';
+import FormField from '../../../components/FormField';
+import PageDefault from '../../../components/PageDefault';
 import storage from '../../../data/storage';
+import useForm from '../../../hooks/useForm';
 
 
 function CadastroCategoria() {
@@ -42,7 +42,7 @@ function CadastroCategoria() {
         />
 
         <FormField
-          label="Nomde do Campeonato"
+          label="Nome do Campeonato"
           type="textarea"
           value={values.descricao}
           name="descricao"
