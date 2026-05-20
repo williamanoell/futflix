@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-//import dadosIniciais from '../../data/dadosIniciais.json';
+import dadosLocais from '../../data/dadosIniciais.json';
 import BannerMain from '../../components/BannerMain';
 import Carousel from '../../components/Carousel';
 import categoriasRepository from '../../repositories/categorias';
@@ -14,8 +14,8 @@ function Home() {
        .then((categoriasComVideos) => {
           setDadosIniciais(categoriasComVideos);
        })
-       .catch((err) => {
-         console.log(err.message);
+       .catch(() => {
+         setDadosIniciais(dadosLocais);
        });
   }, []);
 
