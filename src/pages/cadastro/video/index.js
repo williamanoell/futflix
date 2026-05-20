@@ -6,6 +6,7 @@ import FormField from '../../../components/FormField';
 import Button from '../../../components/Button';
 import videosRepository from '../../../repositories/videos';
 import categoriasRepository from '../../../repositories/categorias';
+import dadosLocais from '../../../data/dadosIniciais.json';
 
 
 
@@ -14,16 +15,20 @@ function CadastroVideo() {
   const [categorias,setcCategorias] = useState([]);
   const categoryTitles = categorias.map(({ titulo }) => titulo);
 
-  const { HandleChange, values } = useForm({
+  const { HandlerChange, values } = useForm({
     titulo: '',
     url: '',
     categoria: '',
   });
 
   useEffect(() => {
-    categoriasRepository.getAll().then((categoriasFromServer)=>{
-      setcCategorias(categoriasFromServer);
-    });
+    categoriasRepository.getAll()
+      .then((categoriasFromServer) => {
+        setcCategorias(categoriasFromServer);
+      })
+      .catch(() => {
+        setcCategorias(dadosLocais);
+      });
   },[]);
 
   return (
@@ -40,10 +45,10 @@ function CadastroVideo() {
         videosRepository.create({
           titulo: values.titulo,
           url: values.url,
-          categoriaId: categoriaEscolhida.id,
-        }).then(()=>{
-          history.push('/');
-        });
+          categoriaId: categoriaEscolhida ? categoriaEscolhida.id : null,
+        })
+          .then(() => { history.push('/'); })
+          .catch(() => { history.push('/'); });
 
         
       }}>
@@ -53,7 +58,7 @@ function CadastroVideo() {
           name="titulo"
           type="text"
           value={values.titulo}
-          onChange={HandleChange}
+          onChange={HandlerChange}
           placeholder="Vídeo Padrão"
         />
 
@@ -62,7 +67,7 @@ function CadastroVideo() {
           name="url"
           type="text"
           value={values.url}
-          onChange={HandleChange}
+          onChange={HandlerChange}
           placeholder="https://www.youtube.com/watch?v=5qPuKhBa7Ag"
         />
 
@@ -70,7 +75,7 @@ function CadastroVideo() {
           label="Categoria"
           name="categoria"
           value={values.categoria}
-          onChange={HandleChange}
+          onChange={HandlerChange}
           suggestions={categoryTitles}
           placeholder="Brasil"
         />
